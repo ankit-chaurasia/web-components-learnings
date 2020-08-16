@@ -1,4 +1,4 @@
-import { Component, h, State, Element, Prop, Watch } from '@stencil/core';
+import { Component, h, State, Element, Prop, Watch, Listen } from '@stencil/core';
 import { AV_API_KEY } from '../../global/global';
 
 @Component({
@@ -14,6 +14,7 @@ export class StockPrice {
   @State() stockUserInput: string;
   @State() stockInputValid = false;
   @State() error: string;
+  @State() loading = false;
 
   @Prop({ mutable: true, reflectToAttr: true }) stockSymbol: string;
 
@@ -71,7 +72,17 @@ export class StockPrice {
     console.log('componentDidUnload');
   }
 
+  @Listen('body:ucSymbolSelected')
+  onStockSymbolSelected(event: CustomEvent) {
+    console.log('Stock symbol selected', event.detail);
+    if (event.detail && event.detail !== this.stockSymbol) {
+      this.stockInputValid = true;
+      this.stockSymbol = event.detail;
+    }
+  }
+
   fetchStockPrice = async (stockSymbol: string) => {
+    this.loading = true;
     try {
       const res = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${AV_API_KEY}`);
       if (res.status !== 200) {
@@ -84,21 +95,32 @@ export class StockPrice {
       }
       this.fetchedPrice = +json['Global Quote']['05. price'];
       this.error = null;
+      this.loading = false;
     } catch (err) {
       console.error(err);
       this.error = err.message;
+      this.fetchedPrice = null;
+      this.loading = false;
     }
   };
+
+  hostData() {
+    return {
+      class: this.error ? 'error' : '',
+    };
+  }
 
   render() {
     return [
       <form onSubmit={this.onFetchStockPrice}>
         <input id="stock-symbol" ref={el => (this.stockInput = el)} value={this.stockUserInput} onInput={this.onUserInput} />
-        <button type="submit" disabled={!this.stockInputValid}>
+        <button type="submit" disabled={!this.stockInputValid || this.loading}>
           Fetch
         </button>
       </form>,
-      <div>{this.error ? <p>{this.error}</p> : this.fetchedPrice ? <p>Price: ${this.fetchedPrice}</p> : <p>Please enter a symbol!</p>}</div>,
+      <div>
+        {this.loading ? <uc-spinner></uc-spinner> : this.error ? <p>{this.error}</p> : this.fetchedPrice ? <p>Price: ${this.fetchedPrice}</p> : <p>Please enter a symbol!</p>}
+      </div>,
     ];
   }
 }

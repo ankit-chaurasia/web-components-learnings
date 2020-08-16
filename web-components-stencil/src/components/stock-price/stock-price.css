@@ -8,6 +8,10 @@
   max-width: 100%;
 }
 
+:host(.error) {
+  border-color: #e79804;
+}
+
 form input {
   font: inherit;
   color: #3b013b;
@@ -37,8 +41,8 @@ form button:active {
 }
 
 form button:disabled {
-    background: #ccc;
-    border-color: #ccc;
-    color: #fff;
-    cursor: not-allowed;
+  background: #ccc;
+  border-color: #ccc;
+  color: #fff;
+  cursor: not-allowed;
 }
