@@ -8,7 +8,7 @@
       body {
         font-family: sans-serif;
       }
-      .side-nav ul {
+      /* .side-nav ul {
         list-style: none;
       }
       .side-nav li {
@@ -17,12 +17,13 @@
       .side-nav a {
         text-decoration: none;
         color: #000;
-      }
+      } */
     </style>
     <script type="module" src="/build/web-components-stencil.esm.js"></script>
     <script nomodule src="/build/web-components-stencil.js"></script>
   </head>
   <body>
+    <!-- Code for sidebar component
     <button id="side-drawer-btn">Open Side Menu</button>
     <uc-side-drawer title="Main menu">
       <nav class="side-nav">
@@ -42,5 +43,8 @@
         }
       })
     </script>
+    -->
+    <uc-stock-price stock-symbol="AAPL"></uc-stock-price>
+    <uc-stock-finder></uc-stock-finder>
   </body>
 </html>
